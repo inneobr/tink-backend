@@ -1,6 +1,6 @@
 FROM openjdk:17
 MAINTAINER root
-RUN mkdir api
-COPY target/*.jar api/backend.jar
+RUN mkdir docker
+COPY target/*.jar docker/api.jar
 EXPOSE 9100
-ENTRYPOINT ["java", "-jar", "/api/backend.jar"]
+ENTRYPOINT ["java", "-jar", "/docker/api.jar"]
