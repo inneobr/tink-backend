@@ -11,11 +11,11 @@ import lombok.Data;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/")
-public class ServerController {
+public class ServiceController {
 	
 	@GetMapping
 	public Status running() {
-		return Status.builder().status(true).message("Aplication is runing...").build();
+		return Status.builder().status(true).message("Service is runing...").build();
 	}
 }
 
