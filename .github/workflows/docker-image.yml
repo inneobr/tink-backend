@@ -24,4 +24,4 @@ jobs:
           context: .
           push: true
           tags: |
-            inneobr/tink-backend:latest
+            inneobr/backend:latest
