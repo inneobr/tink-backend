@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -21,11 +22,10 @@ import lombok.Data;
 public abstract class GenericEntity implements Serializable{	
 	private static final long serialVersionUID = 1L;
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;    
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID uuid;    
     
 	@CreationTimestamp
-	private Date publish;
-
+	private Date date;
 }
