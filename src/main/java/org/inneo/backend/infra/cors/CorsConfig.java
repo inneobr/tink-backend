@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-    @Override
+    @SuppressWarnings("null")
+	@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")

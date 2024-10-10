@@ -3,22 +3,27 @@ package org.inneo.backend.service;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.inneo.backend.infra.security.JwtService;
+
 import org.springframework.stereotype.Service;
-import org.inneo.backend.dtos.UsuarioRequest;
 import org.inneo.backend.dtos.UsuarioResponse;
+import org.inneo.backend.dtos.UsuarioRequest;
+
 import org.inneo.backend.dtos.TokenResponse;
 import org.inneo.backend.reposit.UsuarioRep;
 import org.inneo.backend.reposit.ProfileRep;
-import org.inneo.backend.reposit.TokenRep;
 
+import org.inneo.backend.reposit.TokenRep;
 import org.inneo.backend.enums.TokenType;
 import jakarta.transaction.Transactional;
+
 import org.inneo.backend.domain.Usuario;
 import org.inneo.backend.domain.Profile;
 import org.inneo.backend.domain.Token;
+
 import lombok.RequiredArgsConstructor;
 import org.inneo.backend.enums.Role;
 
@@ -32,7 +37,7 @@ public class UsuarioService {
 	private final TokenRep tokenRep;
 	private final UsuarioRep query;
 	
-public TokenResponse create(UsuarioRequest request) {		
+	public TokenResponse create(UsuarioRequest request) {		
 		if(request.username() == null && query.findByUsername(request.username()) != null) {
 			throw new UsernameNotFoundException("Unavailable or unauthorized.");
 		}		
@@ -103,5 +108,11 @@ public TokenResponse create(UsuarioRequest request) {
 	  
 	  public UsuarioResponse findByUsername(String username) {
 		  return new UsuarioResponse(query.findByUsername(username).orElseThrow());
+	  }
+	  
+	  public Usuario getUsuarioLogado() {
+		  String  username = SecurityContextHolder.getContext().getAuthentication().getName();
+	      Usuario usuario = query.findByUsername(username).orElseThrow();
+	      return usuario;
 	  }
 }
