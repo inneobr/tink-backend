@@ -1,6 +1,9 @@
 package org.inneo.backend.domain;
 
 import org.apache.commons.codec.binary.Base64;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
@@ -36,6 +39,7 @@ public class Gallery extends GenericEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "publication_uuid")
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Publication publication;
 	
 	@Transient
