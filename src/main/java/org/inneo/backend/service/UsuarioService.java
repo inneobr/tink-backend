@@ -16,13 +16,9 @@ import org.inneo.backend.dtos.TokenResponse;
 import org.inneo.backend.reposit.UsuarioRep;
 import org.inneo.backend.reposit.ProfileRep;
 
-import org.inneo.backend.reposit.TokenRep;
-import org.inneo.backend.enums.TokenType;
 import jakarta.transaction.Transactional;
-
 import org.inneo.backend.domain.Usuario;
 import org.inneo.backend.domain.Profile;
-import org.inneo.backend.domain.Token;
 
 import lombok.RequiredArgsConstructor;
 import org.inneo.backend.enums.Role;
@@ -34,7 +30,6 @@ public class UsuarioService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	private final ProfileRep profileRep;
-	private final TokenRep tokenRep;
 	private final UsuarioRep query;
 	
 	public TokenResponse create(UsuarioRequest request) {		
@@ -50,11 +45,10 @@ public class UsuarioService {
 	    
 	    var create = query.save(usuario);
 	    var profile = createProfile(request);
-	    usuario.setProfile(profile);
+	    usuario.setProfileUUID(profile.getUuid());
 	    
 	    create = query.save(usuario);
 	    var token = jwtService.generateToken(usuario);
-	    saveToken(create, token);
 	    
 	    return new TokenResponse(create.getUsername(), token);
 	  }
@@ -67,47 +61,23 @@ public class UsuarioService {
 	    );
 	    var usuario = query.findByUsername(request.username()).orElseThrow();
 	    var token = jwtService.generateToken(usuario);
-	    revokeTokens(usuario);
-	    saveToken(usuario, token);
 	    return new TokenResponse(usuario.getUsername(), token);
 	  }
-
-	  private void saveToken(Usuario usuario, String jwtToken) {
-	    var token = Token.builder()
-	        .usuario(usuario)
-	        .token(jwtToken)
-	        .tokenType(TokenType.BEARER)
-	        .expired(false)
-	        .revoked(false)       
-	        .build();
-	    tokenRep.save(token);
-	  }
-
-	  private void revokeTokens(Usuario usuario) {
-	    var validUserTokens = tokenRep.findAllValidTokenByUsuario(usuario.getUuid());
-	    if (validUserTokens.isEmpty()) return;
-	    
-	    validUserTokens.forEach(token -> {
-	      token.setExpired(true);
-	      token.setRevoked(true);
-	    });
-	    tokenRep.saveAll(validUserTokens);
-	  }
-	  
+		  
 	  private Profile createProfile(UsuarioRequest request) {
 		  var usuario = query.findByUsername(request.username()).orElseThrow();
 		  var profile = Profile.builder()
 				  .biografia(request.biografia())
 				  .email(request.email())
 				  .name(request.name())
-				  .usuario(usuario)
+				  .usuarioUUID(usuario.getUuid())
 				  .build();
 		 profile = profileRep.save(profile);
 		 return profile;
 	  }
 	  
-	  public UsuarioResponse findByUsername(String username) {
-		  return new UsuarioResponse(query.findByUsername(username).orElseThrow());
+	  public UsuarioResponse findUsuario(String username) {
+		  return query.findUsuario(username).orElseThrow();
 	  }
 	  
 	  public Usuario getUsuarioLogado() {

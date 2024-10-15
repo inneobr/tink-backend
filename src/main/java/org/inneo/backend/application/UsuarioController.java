@@ -54,7 +54,7 @@ public class UsuarioController {
 	@GetMapping
 	public ResponseEntity<?> findByUsername(@RequestParam(name="username") String username) {
 		try {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.findByUsername(username));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.findUsuario(username));
 		}catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}		

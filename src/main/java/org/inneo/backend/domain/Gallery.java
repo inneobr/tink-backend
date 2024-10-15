@@ -1,20 +1,18 @@
 package org.inneo.backend.domain;
 
+
+
 import org.apache.commons.codec.binary.Base64;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
+
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Lob;
+import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -37,10 +35,8 @@ public class Gallery extends GenericEntity {
 	@Column(name = "bits")
 	private byte[] bits;
 	
-	@ManyToOne
-	@JoinColumn(name = "publication_uuid")
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private Publication publication;
+	@Column(name = "publication_uuid")
+	public UUID publication;
 	
 	@Transient
 	private String base64;

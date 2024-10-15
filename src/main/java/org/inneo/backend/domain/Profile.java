@@ -1,23 +1,21 @@
 package org.inneo.backend.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.codec.binary.Base64;
 
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Transient;
-import jakarta.persistence.OneToOne;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.Lob;
 
+import jakarta.persistence.Lob;
+import java.util.UUID;
 import lombok.Builder;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,12 +42,10 @@ public class Profile extends GenericEntity{
 	@Lob
 	@Column(name = "bits")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private byte[] bits;
-	
-	@OneToOne
-	@JoinColumn(name = "usuario_uuid")
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	public Usuario usuario;
+	private byte[] bits;	
+
+	@Column(name= "usuario_uuid",unique = true, nullable = false)
+	public UUID usuarioUUID;
 	
 	@Transient
 	private String base64;

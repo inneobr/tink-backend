@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.inneo.backend.reposit.TokenRep;
 import org.springframework.http.MediaType;
 
 import jakarta.servlet.ServletException;
@@ -30,7 +29,6 @@ import java.util.Map;
 public class JwtAuthFilter  extends OncePerRequestFilter{
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
-	private final TokenRep tokenRep;
 
 	@Override
 	protected void doFilterInternal(
@@ -38,8 +36,8 @@ public class JwtAuthFilter  extends OncePerRequestFilter{
 		@NonNull HttpServletResponse response,
 		@NonNull FilterChain filterChain) throws ServletException, IOException {
     	final String authHeader = request.getHeader("Authorization");
-    	final String jwt;
     	final String username;
+    	final String jwt;
     	
     	if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
     		filterChain.doFilter(request, response);
@@ -50,15 +48,12 @@ public class JwtAuthFilter  extends OncePerRequestFilter{
     		jwt = authHeader.substring(7);	
     		username = jwtService.extractUsername(jwt); 	 
     		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-    			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);		 
-    			var isTokenValid = tokenRep.findByToken(jwt).map(tk -> !tk.isExpired() && !tk.isRevoked()).orElse(false);
-	
-    			if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
-    				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); 
-	        
-    				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));				 
-    				SecurityContextHolder.getContext().setAuthentication(authToken);				 
-    			}
+    			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);	
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); 
+        
+				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));				 
+				SecurityContextHolder.getContext().setAuthentication(authToken);				 
+    			
     		}	 
 		 	filterChain.doFilter(request, response);
 		 	
